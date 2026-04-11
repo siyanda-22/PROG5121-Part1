@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/UnitTests/JUnit5TestClass.java to edit this template
  */
-
+import org.junit.jupiter.api.BeforeEach;
 import com.mycompany.quickchatapp2.Login;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,7 +16,7 @@ public class LoginTest {
 
     private Login login;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         // This runs before every single test
         // Creates a fresh Login object and registers a valid user
