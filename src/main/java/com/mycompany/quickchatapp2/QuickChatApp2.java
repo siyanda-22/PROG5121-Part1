@@ -7,6 +7,7 @@ package com.mycompany.quickchatapp2;
 import java.util.Scanner;
 
 /**
+ * QuickChatApp2 - PROG5121 Part 3
  *
  * @author Student
  */
@@ -67,13 +68,13 @@ public class QuickChatApp2 {
         System.out.println("\nRegistration Status: " + registrationResult);
 
         // Stop if registration failed
-        if (!registrationResult.startsWith("Registration successful!")) {
+        if (!registrationResult.startsWith("Registration successful")) {
             System.out.println("Please restart the application and try again.");
             scanner.close();
             return;
         }
 
-       // ---- STEP 3: LOGIN ----
+        // ---- STEP 3: LOGIN ----
         System.out.println("\n--- LOGIN ---");
 
         System.out.print("Enter your username: ");
@@ -92,10 +93,13 @@ public class QuickChatApp2 {
             return;
         }
 
-        // ---- STEP 4: MESSAGING (NEW IN PART 2) ----
+        // ---- STEP 4: MESSAGING ----
 
-        // Reset message counters for a fresh session
+        // Reset message arrays for a fresh session
         Message.resetAll();
+
+        // Load any previously stored messages from the JSON file (Part 3)
+        Message.loadStoredMessages();
 
         // Ask how many messages the user wants to send
         System.out.print("\nHow many messages would you like to send? ");
@@ -119,6 +123,7 @@ public class QuickChatApp2 {
             System.out.println("1) Send Messages");
             System.out.println("2) Show recently sent messages");
             System.out.println("3) Quit");
+            System.out.println("4) Stored Messages");
             System.out.print("Choose an option: ");
 
             String menuChoice = scanner.nextLine().trim();
@@ -138,14 +143,11 @@ public class QuickChatApp2 {
                             System.out.print("Enter recipient cell number (e.g. +27718693002): ");
                             recipient = scanner.nextLine().trim();
 
-                            // Use a temp Message just to call checkRecipient
-                            Message tempMsg = new Message(recipient, "temp");
-                            String recipientCheck = tempMsg.checkRecipient(recipient);
+                            String recipientCheck = Message.checkRecipient(recipient);
                             System.out.println(recipientCheck);
-                            Message.resetAll(); // undo the temp message
 
                             if (recipientCheck.equals("Cell phone number successfully captured.")) {
-                                break; // valid number - move on
+                                break;
                             }
                             System.out.println("Please try again.");
                         }
@@ -156,14 +158,11 @@ public class QuickChatApp2 {
                             System.out.print("Enter your message (max 250 characters): ");
                             messageText = scanner.nextLine().trim();
 
-                            // Use a temp Message just to call checkMessageLength
-                            Message tempMsg2 = new Message(recipient, messageText);
-                            String lengthCheck = tempMsg2.checkMessageLength(messageText);
+                            String lengthCheck = Message.checkMessageLength(messageText);
                             System.out.println(lengthCheck);
-                            Message.resetAll(); // undo the temp message
 
                             if (lengthCheck.equals("Message ready to send.")) {
-                                break; // valid message - move on
+                                break;
                             }
                             System.out.println("Please re-enter your message.");
                         }
@@ -193,18 +192,16 @@ public class QuickChatApp2 {
                             sendChoice = 2;
                         }
 
-                        // Show result of the user's choice
                         System.out.println(msg.sentMessage(sendChoice));
-                        sent++; // count this message regardless of what was chosen
+                        sent++;
                     }
 
-                    // Show total messages sent after all messages are done
                     System.out.println("\nTotal messages sent: " + Message.getTotalMessagesSent());
                     break;
 
-                // ---- OPTION 2: SHOW RECENT MESSAGES (COMING SOON) ----
+                // ---- OPTION 2: SHOW RECENT MESSAGES (REPORT) ----
                 case "2":
-                    System.out.println("Coming Soon.");
+                    System.out.println(Message.generateReport());
                     break;
 
                 // ---- OPTION 3: QUIT ----
@@ -215,8 +212,66 @@ public class QuickChatApp2 {
                     System.out.println("===========================================");
                     break;
 
+                // ---- OPTION 4: STORED MESSAGES (PART 3) ----
+                case "4":
+                    boolean storedMenuRunning = true;
+
+                    while (storedMenuRunning) {
+                        System.out.println("\n--- STORED MESSAGES MENU ---");
+                        System.out.println("a) Display sender and recipient of all stored messages");
+                        System.out.println("b) Display the longest message");
+                        System.out.println("c) Search for a message by Message ID");
+                        System.out.println("d) Search for messages by recipient");
+                        System.out.println("e) Delete a message using the message hash");
+                        System.out.println("f) Display report of all sent messages");
+                        System.out.println("g) Back to main menu");
+                        System.out.print("Choose an option: ");
+
+                        String storedChoice = scanner.nextLine().trim().toLowerCase();
+
+                        switch (storedChoice) {
+                            case "a":
+                                System.out.println(Message.printStoredSenderAndRecipient());
+                                break;
+
+                            case "b":
+                                System.out.println("Longest message: " + Message.getLongestMessage());
+                                break;
+
+                            case "c":
+                                System.out.print("Enter the Message ID to search for: ");
+                                String searchID = scanner.nextLine().trim();
+                                System.out.println(Message.searchByMessageID(searchID));
+                                break;
+
+                            case "d":
+                                System.out.print("Enter the recipient cell number to search for: ");
+                                String searchRecipient = scanner.nextLine().trim();
+                                System.out.println(Message.searchByRecipient(searchRecipient));
+                                break;
+
+                            case "e":
+                                System.out.print("Enter the Message Hash to delete: ");
+                                String deleteHash = scanner.nextLine().trim();
+                                System.out.println(Message.deleteByMessageHash(deleteHash));
+                                break;
+
+                            case "f":
+                                System.out.println(Message.generateReport());
+                                break;
+
+                            case "g":
+                                storedMenuRunning = false;
+                                break;
+
+                            default:
+                                System.out.println("Invalid option. Please enter a, b, c, d, e, f or g.");
+                        }
+                    }
+                    break;
+
                 default:
-                    System.out.println("Invalid option. Please enter 1, 2, or 3.");
+                    System.out.println("Invalid option. Please enter 1, 2, 3 or 4.");
             }
         }
 
