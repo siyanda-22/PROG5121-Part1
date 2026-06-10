@@ -30,7 +30,26 @@
             <version>1.3.0</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Added for PROG5121 Part 3 - used to read and write JSON files -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20240303</version>
+        </dependency>
     </dependencies>
+
+    <!-- Added so Maven can run JUnit 5 tests correctly (including on GitHub Actions) -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+            </plugin>
+        </plugins>
+    </build>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>11</maven.compiler.release>
